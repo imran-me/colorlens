@@ -1,0 +1,253 @@
+/* ======================================================
+   ColorLens - Responsive Rules
+   Breakpoint-specific layout only. Visual styling lives
+   in style.css. Mobile-first refinements layered down.
+   ====================================================== */
+
+/* Ultra-wide: give the shell more breathing room. */
+@media (min-width: 1600px) {
+    :root {
+        --shell-width: 1320px;
+    }
+}
+
+/* Laptops / small desktops: ease the workspace ratio. */
+@media (max-width: 1080px) {
+    .workspace {
+        grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.7fr);
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .footer-about {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Tablets: stack the workspace so the library gets full width. */
+@media (max-width: 920px) {
+    .topbar {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .topbar-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .image-panel {
+        min-height: 360px;
+    }
+
+    .sidebar {
+        min-height: auto;
+    }
+
+    .color-list {
+        max-height: none;
+    }
+
+    .harmony-head {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* Large phones / small tablets. */
+@media (max-width: 720px) {
+    .toolbar {
+        gap: 10px;
+    }
+
+    .left-tools,
+    .right-tools {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .export-group {
+        flex: 1 1 100%;
+        justify-content: space-between;
+    }
+
+    .export-group .tool-button {
+        flex: 1 1 auto;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-about {
+        grid-column: auto;
+    }
+
+    .panel-hint {
+        display: none;
+    }
+}
+
+/* Phones. */
+@media (max-width: 560px) {
+    :root {
+        --page-gutter: 14px;
+        --section-gap: 12px;
+    }
+
+    body {
+        font-size: 14.5px;
+    }
+
+    .topbar {
+        top: 8px;
+        padding: 8px;
+    }
+
+    .logo-text small {
+        display: none;
+    }
+
+    .segmented-control {
+        flex: 1 1 auto;
+    }
+
+    .segmented-control .tool-button {
+        flex: 1 1 0;
+    }
+
+    .hero {
+        margin-top: 22px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+    }
+
+    .btn-cta,
+    .btn-ghost {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .upload-box {
+        min-height: 170px;
+        padding: 24px 16px;
+    }
+
+    .left-tools {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .field {
+        width: 100%;
+    }
+
+    .field select {
+        flex: 1;
+        width: 100%;
+    }
+
+    .right-tools {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .right-tools > .tool-button {
+        width: 100%;
+    }
+
+    .export-group {
+        flex-wrap: wrap;
+    }
+
+    .image-panel {
+        min-height: 300px;
+        padding: 12px;
+    }
+
+    .canvas-wrapper {
+        min-height: 280px;
+    }
+
+    #imageCanvas {
+        max-height: 56vh;
+    }
+
+    .inspector-readout {
+        right: 10px;
+        bottom: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        border-radius: var(--radius-medium);
+    }
+
+    .harmony-studio {
+        padding: 16px;
+    }
+
+    .harmony-base {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .harmony-swatches {
+        grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+    }
+
+    .footer-grid {
+        padding: 18px;
+    }
+
+    .footer-meta {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .statusbar {
+        bottom: 12px;
+        font-size: 0.78rem;
+    }
+
+    .toast-host {
+        right: 12px;
+        left: 12px;
+        bottom: 60px;
+        max-width: none;
+    }
+}
+
+/* Very narrow phones. */
+@media (max-width: 380px) {
+    .segmented-control {
+        flex-direction: column;
+        border-radius: var(--radius-medium);
+    }
+
+    .segmented-control .tool-button {
+        width: 100%;
+        border-radius: calc(var(--radius-medium) - 4px);
+    }
+
+    .left-tools {
+        grid-template-columns: 1fr;
+    }
+
+    .view-toggle {
+        justify-content: center;
+    }
+
+    .export-group .tool-button {
+        flex: 1 1 40%;
+    }
+}

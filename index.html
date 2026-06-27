@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--
+        ColorLens
+        Layout lives here; behavior in js/*.js; styling in css/*.css.
+        Author/contact details are centralized in js/brand.js.
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColorLens | Color Extraction, Inspection & Harmonies</title>
+
+    <meta name="description"
+        content="Extract palettes from images, inspect pixels, generate color harmonies, and export branded color reports (PNG, PDF, CSV, JSON, TXT). Free tool by Imran.">
+    <meta name="author" content="Imran">
+    <meta name="theme-color" content="#0e1116">
+
+    <!-- Open Graph / social -->
+    <meta property="og:title" content="ColorLens — Color Extraction & Inspector">
+    <meta property="og:description"
+        content="Extract palettes, inspect pixels, build harmonies, and export branded color reports.">
+    <meta property="og:type" content="website">
+
+    <link rel="icon" type="image/png" href="assets/colorlens-logo.png">
+    <link rel="apple-touch-icon" href="assets/colorlens-logo.png">
+    <link rel="manifest" href="manifest.webmanifest">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Type pairing: Fraunces (expressive editorial display) + Inter (clean UI/body). -->
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+</head>
+
+<body>
+    <a class="skip-link" href="#workspace">Skip to workspace</a>
+
+    <!--
+        TOP BAR — compact, sticky app chrome.
+        Keep button IDs stable; js/ui.js binds to them.
+    -->
+    <header class="topbar">
+        <a class="logo" href="#" aria-label="ColorLens home">
+            <span class="logo-mark" aria-hidden="true">
+                <img src="assets/colorlens-logo.png" alt="">
+            </span>
+            <span class="logo-text">
+                <strong>ColorLens</strong>
+                <small>by Imran</small>
+            </span>
+        </a>
+
+        <nav class="topbar-actions" aria-label="Application controls">
+            <div class="segmented-control" aria-label="Color tool mode">
+                <button type="button" class="tool-button is-active" id="paletteModeBtn" aria-pressed="true">
+                    <i class="fa-solid fa-swatchbook" aria-hidden="true"></i>
+                    <span>Palette</span>
+                </button>
+
+                <button type="button" class="tool-button" id="inspectorModeBtn" aria-pressed="false">
+                    <i class="fa-solid fa-eye-dropper" aria-hidden="true"></i>
+                    <span>Inspector</span>
+                </button>
+            </div>
+
+            <button type="button" class="tool-button primary" id="uploadNewImageBtn">
+                <i class="fa-solid fa-image" aria-hidden="true"></i>
+                <span>Upload</span>
+            </button>
+
+            <button type="button" class="icon-button" id="darkModeBtn" aria-label="Toggle dark mode">
+                <i class="fa-solid fa-moon" aria-hidden="true"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- HERO — concise positioning. -->
+    <section class="hero" aria-labelledby="heroTitle">
+        <div class="hero-content">
+            <p class="eyebrow"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Color extraction · inspection · harmonies</p>
+            <h1 id="heroTitle">Extract every color.<span class="hero-accent"> Instantly.</span></h1>
+            <p class="hero-sub">
+                Upload an image to generate dominant palettes, inspect pixels, build color harmonies,
+                and export clean, branded reports — all private, all in your browser.
+            </p>
+            <div class="hero-actions">
+                <label for="imageInput" class="btn-cta">
+                    <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> Upload image
+                </label>
+                <button type="button" class="btn-ghost" id="demoBtn">
+                    <i class="fa-solid fa-bolt" aria-hidden="true"></i> Try a sample
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- UPLOAD AREA — drag & drop / browse. -->
+    <section class="upload-section" aria-labelledby="uploadTitle">
+        <div class="upload-box" id="dropZone" role="button" tabindex="0">
+            <i class="fa-solid fa-cloud-arrow-up upload-icon" aria-hidden="true"></i>
+            <h2 id="uploadTitle">Drag &amp; drop an image</h2>
+            <p>PNG · JPG · WebP · GIF — or</p>
+            <label for="imageInput" class="upload-btn">Browse files</label>
+            <input type="file" id="imageInput" accept="image/*" hidden>
+        </div>
+    </section>
+
+    <!-- TOOLBAR — palette controls, view switch, exports. -->
+    <section class="toolbar" aria-label="Palette and export controls">
+        <div class="left-tools">
+            <div class="field">
+                <label for="paletteCount">Colors</label>
+                <select id="paletteCount" name="paletteCount">
+                    <option value="5">5</option>
+                    <option value="8">8</option>
+                    <option value="10" selected>10</option>
+                    <option value="16">16</option>
+                    <option value="20">20</option>
+                    <option value="32">32</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="sortColors">Sort</label>
+                <select id="sortColors" name="sortColors">
+                    <option value="newest" selected>Newest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="brightness">Brightness</option>
+                    <option value="hue">Hue</option>
+                    <option value="name">Name</option>
+                </select>
+            </div>
+
+            <div class="view-toggle" role="group" aria-label="Library view">
+                <button type="button" class="icon-button is-active" id="viewListBtn" aria-pressed="true" aria-label="List view">
+                    <i class="fa-solid fa-list" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="icon-button" id="viewGridBtn" aria-pressed="false" aria-label="Grid view">
+                    <i class="fa-solid fa-border-all" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="right-tools" aria-label="Export and library actions">
+            <div class="export-group" role="group" aria-label="Export formats">
+                <span class="export-label"><i class="fa-solid fa-file-export" aria-hidden="true"></i> Export</span>
+                <button type="button" class="tool-button" id="exportPng" title="Branded PNG poster">PNG</button>
+                <button type="button" class="tool-button" id="exportPdf" title="Branded PDF report">PDF</button>
+                <button type="button" class="tool-button" id="exportCsv">CSV</button>
+                <button type="button" class="tool-button" id="exportJson">JSON</button>
+                <button type="button" class="tool-button" id="exportTxt">TXT</button>
+            </div>
+
+            <button type="button" class="tool-button" id="copyAllBtn" title="Copy all HEX values">
+                <i class="fa-regular fa-copy" aria-hidden="true"></i> Copy all
+            </button>
+            <button type="button" class="tool-button danger" id="clearColors">
+                <i class="fa-solid fa-trash-can" aria-hidden="true"></i> Clear
+            </button>
+        </div>
+    </section>
+
+    <!-- MAIN WORKSPACE — image canvas + color library. -->
+    <main class="workspace" id="workspace">
+        <section class="image-panel" aria-label="Image preview and inspector canvas">
+            <div class="panel-head">
+                <span class="panel-title"><i class="fa-regular fa-image" aria-hidden="true"></i> Canvas</span>
+                <span class="panel-hint" id="canvasHint">Upload an image, then switch to Inspector to pick pixels.</span>
+            </div>
+            <div class="canvas-wrapper">
+                <div class="canvas-empty" id="canvasEmpty">
+                    <i class="fa-regular fa-image" aria-hidden="true"></i>
+                    <p>Your image preview appears here</p>
+                </div>
+                <canvas id="imageCanvas" aria-label="Uploaded image preview"></canvas>
+                <canvas id="magnifierCanvas" aria-label="Pixel magnifier"></canvas>
+
+                <div class="inspector-readout" id="inspectorReadout" hidden>
+                    <span class="current-color-preview" id="currentColorPreview"></span>
+                    <span id="currentHex">#000000</span>
+                    <span id="currentRgb">RGB(0, 0, 0)</span>
+                </div>
+            </div>
+        </section>
+
+        <aside class="sidebar" aria-labelledby="libraryTitle">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <h2 id="libraryTitle">Color Library</h2>
+                    <span class="count-badge" id="colorCount">0</span>
+                </div>
+                <label class="visually-hidden" for="searchColors">Search colors</label>
+                <div class="search-field">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <input type="search" placeholder="Search name, HEX, RGB…" id="searchColors" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="empty-state" id="emptyState">
+                <i class="fa-solid fa-swatchbook" aria-hidden="true"></i>
+                <p>Upload an image or try a sample to begin building your color library.</p>
+            </div>
+
+            <div class="color-list view-list" id="colorList" aria-live="polite"></div>
+        </aside>
+    </main>
+
+    <!-- HARMONY STUDIO — color-theory schemes from any base color. -->
+    <section class="harmony-studio" aria-labelledby="harmonyTitle">
+        <div class="harmony-head">
+            <div>
+                <p class="eyebrow"><i class="fa-solid fa-palette" aria-hidden="true"></i> Color theory</p>
+                <h2 id="harmonyTitle">Harmony Studio</h2>
+                <p class="harmony-sub">Pick a base color and generate matching schemes. Click any swatch to save it.</p>
+            </div>
+            <div class="harmony-base">
+                <label for="harmonyBase">Base</label>
+                <input type="color" id="harmonyBase" value="#1976d2" aria-label="Base color for harmonies">
+                <span class="harmony-base-hex" id="harmonyBaseHex">#1976D2</span>
+            </div>
+        </div>
+
+        <div class="harmony-schemes" id="harmonySchemes" role="tablist" aria-label="Harmony schemes"></div>
+
+        <div class="harmony-result">
+            <div class="harmony-swatches" id="harmonySwatches" aria-live="polite"></div>
+            <button type="button" class="tool-button primary" id="harmonyAddAll">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> Add all to library
+            </button>
+        </div>
+    </section>
+
+    <!-- PROFESSIONAL FOOTER — about, support, contact, authorization. -->
+    <footer class="site-footer" aria-labelledby="footerTitle">
+        <div class="footer-grid">
+            <div class="footer-col footer-about">
+                <div class="footer-brand">
+                    <img src="assets/colorlens-logo.png" alt="ColorLens logo" class="footer-logo">
+                    <div>
+                        <h2 id="footerTitle">ColorLens</h2>
+                        <p class="footer-tag">Precise color extraction &amp; inspection for designers, developers and artists.</p>
+                    </div>
+                </div>
+                <p class="footer-note">
+                    100% client-side. Your images never leave your device — every palette,
+                    inspection and export happens locally in your browser.
+                </p>
+                <p class="footer-authorized">
+                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                    <span id="footerAuthorized">Free to use for personal, educational &amp; commercial color work. Please keep this credit intact.</span>
+                </p>
+            </div>
+
+            <div class="footer-col footer-support">
+                <p class="footer-kicker"><i class="fa-solid fa-heart" aria-hidden="true"></i> Support free resources</p>
+                <h3>Help Imran build more free tools</h3>
+                <p id="footerSupport">
+                    ColorLens is free and ad-free. If it saved you time, consider supporting Imran so more free,
+                    public resources can be built for everyone.
+                </p>
+                <div class="footer-contact">
+                    <a class="contact-chip whatsapp" id="contactWhatsapp" href="https://wa.me/8801972037650"
+                        target="_blank" rel="noopener noreferrer">
+                        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                        <span><strong>WhatsApp</strong><small>+880 1972-037650</small></span>
+                    </a>
+                    <a class="contact-chip email" id="contactEmail"
+                        href="mailto:me.imran.personal@gmail.com?subject=ColorLens%20—%20Hello%20Imran">
+                        <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                        <span><strong>Email</strong><small>me.imran.personal@gmail.com</small></span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-col footer-profile">
+                <p class="footer-kicker"><i class="fa-solid fa-compass" aria-hidden="true"></i> Creator's workspace</p>
+                <h3>OppTrack · Life OS</h3>
+                <p>
+                    Imran's personal opportunity &amp; life-management system — opportunities, applications,
+                    deadlines, achievements, research and portfolio work.
+                </p>
+                <a class="footer-link" href="https://imran-me.github.io/OppTracker/" target="_blank"
+                    rel="noopener noreferrer">
+                    <span>Visit portfolio</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-meta">
+            <span>© <span id="footerYear">2025</span> ColorLens · Built with HTML, CSS &amp; vanilla JavaScript by Imran.</span>
+            <span class="footer-made">Crafted with <i class="fa-solid fa-heart" aria-hidden="true"></i> for the open web.</span>
+        </div>
+    </footer>
+
+    <!-- STATUS BAR — concise app feedback. -->
+    <div class="statusbar" role="status" aria-live="polite">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="statusText">Ready</span>
+    </div>
+
+    <!-- TOAST HOST — transient confirmations. -->
+    <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- COLOR CARD TEMPLATE — cloned per saved color. -->
+    <template id="colorCardTemplate">
+        <article class="color-card">
+            <div class="color-swatch" aria-hidden="true">
+                <span class="color-circle"></span>
+            </div>
+
+            <div class="color-info">
+                <div class="color-title-row">
+                    <h3 class="color-name">Royal Blue</h3>
+                    <button type="button" class="icon-button favoriteBtn" aria-label="Favorite color">
+                        <i class="fa-regular fa-star" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+                <div class="color-values">
+                    <p class="hex">#4169E1</p>
+                    <p class="rgb">RGB(65, 105, 225)</p>
+                    <p class="hsl">HSL(225, 73%, 57%)</p>
+                    <p class="hsv">HSV(225, 71%, 88%)</p>
+                    <p class="cmyk">CMYK(71%, 53%, 0%, 12%)</p>
+                </div>
+
+                <div class="contrast-summary">
+                    <span class="contrast-ratio">Contrast 4.5:1</span>
+                    <span class="text-recommendation">Text: White</span>
+                    <span class="aa-badge">AA</span>
+                    <span class="aaa-badge">AAA</span>
+                </div>
+
+                <div class="actions" aria-label="Color actions">
+                    <button type="button" class="copyBtn" data-copy-format="hex">HEX</button>
+                    <button type="button" class="copyBtn" data-copy-format="rgb">RGB</button>
+                    <button type="button" class="copyBtn" data-copy-format="hsl">HSL</button>
+                    <button type="button" class="copyBtn" data-copy-format="cmyk">CMYK</button>
+                    <button type="button" class="icon-button deleteBtn" aria-label="Delete color">
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </article>
+    </template>
+
+    <!-- THIRD-PARTY LIBRARIES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.6.0/color-thief.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.3/jspdf.umd.min.js"></script>
+
+    <!-- App entry point. -->
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
