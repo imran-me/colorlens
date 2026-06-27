@@ -1,5 +1,6 @@
 import { appState, setMode } from "./state.js";
 import { isSameColor, normalizeColor } from "./colorConversions.js";
+import { colorNamesReady, getNearestColorName } from "./colorNames.js";
 import { exportCsv, exportJson, exportPdf, exportTxt } from "./pdfExporter.js";
 import { exportPng } from "./imageExporter.js";
 import { refreshCursor } from "./canvasViewport.js";
@@ -37,6 +38,18 @@ export function initializeUI() {
     renderColorLibrary();
     renderHarmony();
     setStatus("Ready");
+
+    // When the large name database finishes loading, re-name everything accurately.
+    colorNamesReady.then((loaded) => {
+        if (!loaded) {
+            return;
+        }
+        appState.colors.forEach((color) => {
+            color.name = getNearestColorName(color.rgb);
+        });
+        renderColorLibrary();
+        renderHarmony();
+    });
 }
 
 /* ---------------- color library ---------------- */

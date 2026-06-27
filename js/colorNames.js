@@ -59,7 +59,81 @@ function colorDistance(first, second) {
     );
 }
 
+/*
+    Large name database
+    The ~140 CSS colors above are only a coarse fallback. For accurate, specific
+    names we load a ~32k handpicked color-name database (meodai/color-names) and
+    match by nearest squared RGB distance. The dataset loads asynchronously; until
+    it's ready, getNearestColorName transparently uses the CSS fallback.
+*/
+
+let nameIndex = null;
+
+export const colorNamesReady = loadNameDatabase();
+
+async function loadNameDatabase() {
+    try {
+        const url = new URL("../assets/colornames.json", import.meta.url);
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const count = data.length;
+        const names = new Array(count);
+        const reds = new Uint8Array(count);
+        const greens = new Uint8Array(count);
+        const blues = new Uint8Array(count);
+
+        for (let i = 0; i < count; i += 1) {
+            const entry = data[i];
+            names[i] = entry.name;
+            const value = parseInt(entry.hex.slice(1), 16);
+            reds[i] = (value >> 16) & 255;
+            greens[i] = (value >> 8) & 255;
+            blues[i] = value & 255;
+        }
+
+        nameIndex = { names, reds, greens, blues, count };
+        return true;
+    } catch (error) {
+        console.warn("Color-name database unavailable; using built-in list.", error);
+        return false;
+    }
+}
+
 export function getNearestColorName(rgb) {
+    if (nameIndex) {
+        return nearestFromIndex(rgb);
+    }
+    return nearestFromCssList(rgb);
+}
+
+function nearestFromIndex({ r, g, b }) {
+    const { names, reds, greens, blues, count } = nameIndex;
+    let bestIndex = 0;
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    for (let i = 0; i < count; i += 1) {
+        const dr = r - reds[i];
+        const dg = g - greens[i];
+        const db = b - blues[i];
+        const distance = dr * dr + dg * dg + db * db;
+
+        if (distance < bestDistance) {
+            bestDistance = distance;
+            bestIndex = i;
+            if (distance === 0) {
+                break;
+            }
+        }
+    }
+
+    return names[bestIndex];
+}
+
+function nearestFromCssList(rgb) {
     let bestMatch = CSS_COLORS[0][0];
     let bestDistance = Number.POSITIVE_INFINITY;
 

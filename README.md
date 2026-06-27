@@ -14,6 +14,9 @@ Built with HTML5, CSS3, and vanilla JavaScript (ES modules). GitHub Pages friend
   monochromatic schemes from any base color.
 - **Color library** — search, sort (newest/oldest/brightness/hue/name), favorites, list & grid views.
 - **Rich color data** — HEX, RGB, HSL, HSV, CMYK, nearest color name, and WCAG AA/AAA contrast.
+- **30,000+ named colors** — an offline database of ~32k handpicked color names (meodai/color-names)
+  gives specific, accurate names to shades the basic CSS palette can't describe. Loads asynchronously
+  with a built-in ~140-color CSS fallback so naming works instantly and upgrades when ready.
 - **Branded exports** — PNG poster, PDF report, CSV, JSON, TXT. Every output carries the logo,
   a subtle watermark, a unique report ID, date/time, version, and author + contact details.
 - **Auto-save** — your library persists in `localStorage` between sessions.
@@ -41,12 +44,14 @@ Built with HTML5, CSS3, and vanilla JavaScript (ES modules). GitHub Pages friend
   - `inspector.js` — magnifier & eyedropper.
   - `paletteExtractor.js` — palette extraction + duplicate merging.
   - `colorConversions.js` — color math (RGB/HSL/HSV/CMYK, contrast, names).
-  - `colorNames.js` — nearest CSS color-name lookup.
+  - `colorNames.js` — nearest color-name lookup (30k-color database + CSS fallback).
   - `harmonies.js` — color-theory scheme generator.
   - `pdfExporter.js` — branded PDF/CSV/JSON/TXT exporters.
   - `imageExporter.js` — branded PNG palette poster.
   - `logoAsset.js` — logo loader/cache for embedding in exports.
-- `assets/` — static assets (logo).
+- `assets/`
+  - `logo.*` — brand logo embedded in exports.
+  - `colornames.json` — ~32k color name/hex records powering accurate color naming.
 
 ## Credits
 
@@ -56,3 +61,8 @@ If ColorLens helped you, consider supporting more free public tools.
 - WhatsApp: +880 1972-037650
 - Email: me.imran.personal@gmail.com
 - Portfolio: https://imran-me.github.io/OppTracker/
+
+### Data & libraries
+
+- Color names from [meodai/color-names](https://github.com/meodai/color-names) (MIT) — ~32k records.
+- Palette extraction via [Color Thief](https://github.com/lokesh/color-thief).
