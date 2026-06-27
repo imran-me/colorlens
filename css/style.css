@@ -119,9 +119,13 @@ body::after {
     z-index: -1;
     pointer-events: none;
     content: "";
-    opacity: 0.4;
+    opacity: 0.32;
     mix-blend-mode: soft-light;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+body.theme-dark::after {
+    opacity: 0.5;
 }
 
 body.theme-dark::before {
@@ -426,9 +430,12 @@ select {
 
 .hero-accent {
     background: var(--spectrum);
+    background-size: 200% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    font-style: italic;
+    animation: spectrumShift 8s ease-in-out infinite alternate;
 }
 
 .hero-sub {
@@ -775,7 +782,8 @@ body.has-image #imageCanvas {
     border-radius: var(--radius-pill);
     box-shadow: var(--shadow-soft);
     backdrop-filter: blur(10px);
-    font-size: 0.82rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
     font-weight: 600;
 }
 
@@ -869,9 +877,13 @@ input[type="search"]:focus-visible {
 }
 
 .empty-state i {
-    font-size: 2rem;
-    color: var(--color-faint);
-    opacity: 0.7;
+    font-size: 2.4rem;
+    background: var(--spectrum);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: spectrumShift 9s ease-in-out infinite alternate;
 }
 
 .empty-state p {
@@ -922,13 +934,30 @@ input[type="search"]:focus-visible {
 }
 
 .color-circle {
+    position: relative;
     display: block;
     width: 50px;
     height: 50px;
     background: #4169e1;
     border: 3px solid var(--color-surface-strong);
     border-radius: 14px;
+    overflow: hidden;
     box-shadow: 0 0 0 1px var(--color-border), 0 8px 18px rgba(0, 0, 0, 0.14);
+    transition: transform var(--transition-fast) var(--ease-out-expo);
+}
+
+/* Glossy sheen — gives each swatch a tactile, painted quality. */
+.color-circle::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent 42%);
+    pointer-events: none;
+}
+
+.color-card:hover .color-circle {
+    transform: scale(1.05) rotate(-2deg);
 }
 
 .color-info {
@@ -1259,9 +1288,9 @@ input[type="search"]:focus-visible {
 }
 
 .harmony-swatch .meta .hex {
-    font-size: 0.74rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
     color: var(--color-muted);
-    font-variant-numeric: tabular-nums;
 }
 
 .harmony-swatch .meta .add-hint {
@@ -1559,6 +1588,32 @@ input[type="search"]:focus-visible {
 
 /* ===================== Motion ===================== */
 
+/* Animated spectrum accent strips — a slow, living rainbow edge. */
+.upload-box::before,
+.footer-grid::before {
+    background: var(--spectrum);
+    background-size: 200% 100%;
+    animation: spectrumShift 9s ease-in-out infinite alternate;
+}
+
+@keyframes spectrumShift {
+    from { background-position: 0% 50%; }
+    to { background-position: 100% 50%; }
+}
+
+/* Glossy sheen on harmony chips to match the library swatches. */
+.harmony-swatch .chip {
+    position: relative;
+}
+
+.harmony-swatch .chip::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.32), transparent 46%);
+    pointer-events: none;
+}
+
 .topbar,
 .hero,
 .upload-section,
@@ -1566,7 +1621,7 @@ input[type="search"]:focus-visible {
 .workspace,
 .harmony-studio,
 .site-footer {
-    animation: fadeSlideUp 420ms ease both;
+    animation: fadeSlideUp 560ms var(--ease-out-expo) both;
 }
 
 .hero { animation-delay: 40ms; }
@@ -1577,7 +1632,7 @@ input[type="search"]:focus-visible {
 .site-footer { animation-delay: 240ms; }
 
 @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
 }
 

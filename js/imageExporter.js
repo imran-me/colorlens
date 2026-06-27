@@ -103,12 +103,12 @@ function paintHeader(ctx, logoImg, count, state) {
 
 function writeBrandText(ctx, x, top, count, state) {
     ctx.fillStyle = "#ffffff";
-    ctx.font = "800 34px Inter, Arial, sans-serif";
-    ctx.fillText(BRAND.appName, x, top + 34);
+    ctx.font = "700 38px Georgia, 'Times New Roman', serif";
+    ctx.fillText(BRAND.appName, x, top + 36);
 
     ctx.fillStyle = "#9aa6b8";
-    ctx.font = "500 15px Inter, Arial, sans-serif";
-    ctx.fillText("Color Palette Report", x, top + 58);
+    ctx.font = "italic 500 15px Georgia, 'Times New Roman', serif";
+    ctx.fillText("Color Palette Report", x, top + 60);
 
     const report = buildReportMeta();
     const meta = `${count} color${count === 1 ? "" : "s"}  ·  ${report.date} ${report.time}`;

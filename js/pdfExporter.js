@@ -175,8 +175,8 @@ function drawPdfHeader(doc, state, page, logo, report) {
     }
 
     doc.setTextColor(255, 255, 255);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(24);
+    doc.setFont("times", "bold");
+    doc.setFontSize(26);
     doc.text(`${BRAND.appName} Palette Report`, textX, 60);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
