@@ -14,6 +14,7 @@
     --color-surface-strong: #ffffff;
     --color-text: #1d2430;
     --color-heading: #0e1116;
+    --color-on-heading: #ffffff;
     --color-muted: #5f6b7e;
     --color-faint: #8a94a5;
     --color-border: rgba(20, 24, 32, 0.10);
@@ -21,6 +22,9 @@
     --color-accent: #2563eb;
     --color-accent-strong: #1d4ed8;
     --color-accent-soft: #e8f0ff;
+    /* Filled-button blue — stays saturated in both themes so white text reads. */
+    --color-accent-btn: #2563eb;
+    --color-accent-btn-hover: #1d4ed8;
     --color-success: #0f9f6e;
     --color-danger: #e0453f;
     --color-warning: #d98508;
@@ -59,6 +63,7 @@ body.theme-dark {
     --color-surface-strong: #1a1f29;
     --color-text: #e7ecf3;
     --color-heading: #ffffff;
+    --color-on-heading: #0d1015;
     --color-muted: #9aa6b8;
     --color-faint: #6f7d92;
     --color-border: rgba(255, 255, 255, 0.10);
@@ -66,6 +71,8 @@ body.theme-dark {
     --color-accent: #60a5fa;
     --color-accent-strong: #93c5fd;
     --color-accent-soft: rgba(96, 165, 250, 0.16);
+    --color-accent-btn: #2f6fe0;
+    --color-accent-btn-hover: #2560c8;
     --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.30);
     --shadow-lift: 0 18px 40px rgba(0, 0, 0, 0.40);
 }
@@ -261,7 +268,7 @@ h1, h2, h3 {
 
 .logo-mark img {
     display: block;
-    height: 100%;
+    height: 120px ;
     width: auto;
     object-fit: contain;
     filter: drop-shadow(0 4px 12px rgba(15, 23, 42, 0.18));
@@ -357,20 +364,20 @@ select:hover {
 .tool-button.is-active,
 .icon-button.is-active,
 .segmented-control .tool-button[aria-pressed="true"] {
-    color: #fff;
+    color: var(--color-on-heading);
     background: var(--color-heading);
     border-color: var(--color-heading);
 }
 
 .tool-button.primary {
     color: #fff;
-    background: var(--color-accent);
-    border-color: var(--color-accent);
+    background: var(--color-accent-btn);
+    border-color: var(--color-accent-btn);
 }
 
 .tool-button.primary:hover {
-    background: var(--color-accent-strong);
-    border-color: var(--color-accent-strong);
+    background: var(--color-accent-btn-hover);
+    border-color: var(--color-accent-btn-hover);
 }
 
 .tool-button.danger {
@@ -472,13 +479,13 @@ select {
 
 .btn-cta {
     color: #fff;
-    background: var(--color-accent);
-    border-color: var(--color-accent);
+    background: var(--color-accent-btn);
+    border-color: var(--color-accent-btn);
     box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
 }
 
 .btn-cta:hover {
-    background: var(--color-accent-strong);
+    background: var(--color-accent-btn-hover);
     transform: translateY(-1px);
     box-shadow: var(--shadow-lift);
 }
@@ -562,7 +569,7 @@ select {
 }
 
 .upload-btn {
-    color: #fff;
+    color: var(--color-on-heading);
     background: var(--color-heading);
     border-color: var(--color-heading);
     min-height: 40px;
@@ -831,7 +838,7 @@ body.has-image .canvas-stage {
 
 .canvas-tool-btn.is-active {
     color: #fff;
-    background: var(--color-accent);
+    background: var(--color-accent-btn);
 }
 
 .canvas-tool-btn.save-current {
@@ -947,7 +954,7 @@ body.has-image .canvas-stage {
     height: 24px;
     padding: 0 8px;
     color: #fff;
-    background: var(--color-accent);
+    background: var(--color-accent-btn);
     border-radius: var(--radius-pill);
     font-size: 0.78rem;
     font-weight: 700;
@@ -1356,7 +1363,7 @@ input[type="search"]:focus-visible {
 }
 
 .harmony-schemes .scheme-btn.is-active {
-    color: #fff;
+    color: var(--color-on-heading);
     background: var(--color-heading);
     border-color: var(--color-heading);
 }
@@ -1632,7 +1639,7 @@ input[type="search"]:focus-visible {
 }
 
 .contact-chip.whatsapp i { background: #25d366; }
-.contact-chip.email i { background: var(--color-accent); }
+.contact-chip.email i { background: var(--color-accent-btn); }
 
 .contact-chip span {
     display: flex;
@@ -1660,7 +1667,7 @@ input[type="search"]:focus-visible {
     gap: 9px;
     min-height: 42px;
     padding: 0 18px;
-    color: #fff;
+    color: var(--color-on-heading);
     background: var(--color-heading);
     border: 1px solid var(--color-heading);
     border-radius: var(--radius-pill);
