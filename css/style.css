@@ -87,6 +87,7 @@ body {
     position: relative;
     min-height: 100vh;
     margin: 0;
+    overflow-x: clip;
     font-family: var(--font-sans);
     font-size: 15px;
     line-height: 1.55;
@@ -96,20 +97,18 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Living aurora — slow-drifting color clouds give the page an artistic atmosphere. */
+/* Fine-art / digital-art backdrop. A real art image sits behind everything; a
+   soft scrim keeps text readable, and frosted panels let the art glow through. */
 body::before {
     position: fixed;
-    inset: -20%;
+    inset: 0;
     z-index: -2;
     pointer-events: none;
     content: "";
     background:
-        radial-gradient(38% 42% at 16% 12%, rgba(59, 130, 246, 0.22), transparent 60%),
-        radial-gradient(34% 38% at 88% 8%, rgba(255, 90, 104, 0.18), transparent 60%),
-        radial-gradient(40% 44% at 78% 86%, rgba(32, 180, 134, 0.18), transparent 62%),
-        radial-gradient(36% 40% at 24% 92%, rgba(245, 197, 66, 0.16), transparent 60%);
-    filter: blur(20px) saturate(1.1);
-    animation: auroraDrift 26s ease-in-out infinite alternate;
+        linear-gradient(rgba(244, 246, 250, 0.64), rgba(244, 246, 250, 0.72)),
+        url("../assets/art-backdrop.svg") center center / cover no-repeat;
+    background-attachment: fixed;
 }
 
 /* Fine grain texture — tactile, print-like feel that designers respond to. */
@@ -129,13 +128,10 @@ body.theme-dark::after {
 }
 
 body.theme-dark::before {
-    filter: blur(24px) saturate(1.2) brightness(0.8);
-}
-
-@keyframes auroraDrift {
-    0% { transform: translate3d(0, 0, 0) scale(1); }
-    50% { transform: translate3d(2%, -1.5%, 0) scale(1.06); }
-    100% { transform: translate3d(-2%, 1.5%, 0) scale(1.04); }
+    background:
+        linear-gradient(rgba(11, 14, 19, 0.74), rgba(11, 14, 19, 0.82)),
+        url("../assets/art-backdrop.svg") center center / cover no-repeat;
+    background-attachment: fixed;
 }
 
 a {
@@ -173,7 +169,7 @@ h1, h2, h3 {
 }
 
 /* Editorial serif for display headings — sets the artistic, crafted tone. */
-.hero h1,
+.hero h2,
 .harmony-head h2,
 .footer-brand h2,
 .upload-box h2,
@@ -247,46 +243,28 @@ h1, h2, h3 {
 .logo {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     min-width: max-content;
 }
 
+/* Logo stands free — no frame. The PNG is a wide lockup (icon + wordmark). */
 .logo-mark {
-    display: grid;
-    width: 40px;
-    height: 40px;
-    overflow: hidden;
-    place-items: center;
-    background: var(--color-surface-strong);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.10);
+    display: inline-flex;
+    align-items: center;
+    height: 52px;
+    transition: transform var(--transition-medium) var(--ease-out-expo);
+}
+
+.logo:hover .logo-mark {
+    transform: scale(1.04);
 }
 
 .logo-mark img {
     display: block;
-    width: 100%;
     height: 100%;
-    object-fit: cover;
-}
-
-.logo-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.1;
-}
-
-.logo-text strong {
-    color: var(--color-heading);
-    font-size: 1.05rem;
-    font-weight: 800;
-    letter-spacing: -0.01em;
-}
-
-.logo-text small {
-    color: var(--color-faint);
-    font-size: 0.7rem;
-    font-weight: 600;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 12px rgba(15, 23, 42, 0.18));
 }
 
 .topbar-actions {
@@ -305,6 +283,26 @@ h1, h2, h3 {
     background: var(--color-background-soft);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-pill);
+}
+
+.topbar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 0 14px;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    font-size: 0.86rem;
+    font-weight: 650;
+    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.topbar-link:hover {
+    border-color: var(--color-border-strong);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
 }
 
 /* ===================== Buttons / controls ===================== */
@@ -401,11 +399,17 @@ select {
 /* ===================== Hero ===================== */
 
 .hero {
-    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 22px;
 }
 
 .hero-content {
-    max-width: 720px;
+    min-width: 0;
+    flex: 1 1 auto;
 }
 
 .eyebrow {
@@ -420,12 +424,13 @@ select {
     text-transform: uppercase;
 }
 
-.hero h1 {
+.hero h2 {
     margin: 0;
-    font-size: clamp(2.1rem, 5vw, 3.6rem);
-    line-height: 1.02;
-    letter-spacing: -0.018em;
+    font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 .hero-accent {
@@ -439,17 +444,19 @@ select {
 }
 
 .hero-sub {
-    max-width: 620px;
-    margin: 14px 0 0;
+    margin: 8px 0 0;
     color: var(--color-muted);
-    font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+    font-size: clamp(0.88rem, 1.2vw, 1.02rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .hero-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 20px;
+    flex: 0 0 auto;
 }
 
 .btn-cta,
@@ -485,23 +492,29 @@ select {
 /* ===================== Upload ===================== */
 
 .upload-section {
-    margin-top: 22px;
+    margin-top: 14px;
 }
 
 .upload-box {
     position: relative;
-    display: grid;
-    min-height: 190px;
-    place-items: center;
-    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 88px;
+    padding: 14px 18px;
     overflow: hidden;
-    text-align: center;
+    text-align: left;
     background: var(--color-surface);
     border: 1.5px dashed var(--color-border-strong);
     border-radius: var(--radius-large);
     box-shadow: var(--shadow-soft);
     backdrop-filter: blur(16px);
     transition: transform var(--transition-medium), border-color var(--transition-medium), box-shadow var(--transition-medium);
+}
+
+.upload-copy {
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .upload-box::before {
@@ -526,26 +539,26 @@ select {
 
 .upload-icon {
     display: grid;
-    width: 52px;
-    height: 52px;
-    margin: 0 auto 12px;
+    width: 46px;
+    height: 46px;
+    flex: 0 0 auto;
     place-items: center;
     color: var(--color-accent);
     background: var(--color-accent-soft);
-    border-radius: 16px;
-    font-size: 1.3rem;
+    border-radius: 14px;
+    font-size: 1.2rem;
 }
 
 .upload-box h2 {
     margin: 0;
-    font-size: clamp(1.2rem, 2.4vw, 1.6rem);
-    font-weight: 750;
+    font-size: 1.05rem;
+    font-weight: 700;
 }
 
 .upload-box p {
-    margin: 8px 0 12px;
+    margin: 2px 0 0;
     color: var(--color-muted);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .upload-btn {
@@ -553,6 +566,7 @@ select {
     background: var(--color-heading);
     border-color: var(--color-heading);
     min-height: 40px;
+    flex: 0 0 auto;
     padding: 0 18px;
     display: inline-flex;
     align-items: center;
@@ -653,7 +667,7 @@ body.has-image .upload-section {
 
 .workspace {
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.6fr);
+    grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.75fr);
     gap: var(--section-gap);
     margin-top: var(--section-gap);
 }
@@ -671,7 +685,7 @@ body.has-image .upload-section {
 .image-panel {
     display: flex;
     flex-direction: column;
-    min-height: 420px;
+    min-height: 340px;
     padding: 14px;
 }
 
@@ -702,7 +716,7 @@ body.has-image .upload-section {
     position: relative;
     display: grid;
     flex: 1;
-    min-height: 360px;
+    min-height: 300px;
     overflow: hidden;
     place-items: center;
     background:
@@ -740,20 +754,119 @@ body.has-image .canvas-empty {
     display: none;
 }
 
-#imageCanvas {
+.canvas-stage {
     display: none;
+    place-items: center;
+    transform: translate(0, 0) scale(1);
+    transform-origin: center center;
+    will-change: transform;
+}
+
+body.has-image .canvas-stage {
+    display: grid;
+}
+
+#imageCanvas {
+    display: block;
     max-width: 100%;
-    max-height: 70vh;
+    max-height: 64vh;
     border-radius: var(--radius-small);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
-body.has-image #imageCanvas {
-    display: block;
+/* Cursors reflect the active mode / tool. */
+.canvas-wrapper[data-tool="view"] .canvas-stage { cursor: default; }
+.canvas-wrapper[data-tool="pick"] .canvas-stage { cursor: crosshair; }
+.canvas-wrapper[data-tool="pan"] .canvas-stage { cursor: grab; }
+.canvas-wrapper[data-tool="pan"].is-panning .canvas-stage { cursor: grabbing; }
+
+/* Canvas tool overlay. */
+.canvas-tools[hidden] {
+    display: none;
 }
 
-.inspector-mode #imageCanvas {
-    cursor: crosshair;
+.canvas-tools {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.canvas-tools .tool-cluster {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px;
+    pointer-events: auto;
+    background: color-mix(in srgb, var(--color-surface-strong), transparent 8%);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(14px);
+}
+
+.canvas-tool-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    color: var(--color-text);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+.canvas-tool-btn:hover {
+    background: var(--color-background-soft);
+    transform: translateY(-1px);
+}
+
+.canvas-tool-btn.is-active {
+    color: #fff;
+    background: var(--color-accent);
+}
+
+.canvas-tool-btn.save-current {
+    color: #fff;
+    background: var(--color-success);
+}
+
+.canvas-tool-btn.save-current:hover {
+    background: color-mix(in srgb, var(--color-success), black 10%);
+}
+
+.zoom-level {
+    min-width: 46px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--color-muted);
+}
+
+.readout-save {
+    display: inline-grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    color: #fff;
+    background: var(--color-success);
+    border: none;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    transition: transform var(--transition-fast);
+}
+
+.readout-save:hover {
+    transform: scale(1.12);
 }
 
 #magnifierCanvas {
@@ -765,6 +878,10 @@ body.has-image #imageCanvas {
     border-radius: 50%;
     box-shadow: var(--shadow-lift);
     pointer-events: none;
+}
+
+.inspector-readout[hidden] {
+    display: none;
 }
 
 .inspector-readout {
@@ -859,6 +976,10 @@ input[type="search"] {
 input[type="search"]:hover,
 input[type="search"]:focus-visible {
     border-color: var(--color-border-strong);
+}
+
+.empty-state[hidden] {
+    display: none;
 }
 
 .empty-state {
@@ -1411,6 +1532,72 @@ input[type="search"]:focus-visible {
     font-size: 0.86rem;
 }
 
+/* Energetic, eye-catching support card. */
+.support-card {
+    position: relative;
+    height: 100%;
+    padding: 18px;
+    overflow: hidden;
+    background:
+        radial-gradient(120% 100% at 0% 0%, color-mix(in srgb, var(--spectrum-red), transparent 86%), transparent 55%),
+        radial-gradient(120% 120% at 100% 100%, color-mix(in srgb, var(--spectrum-yellow), transparent 84%), transparent 55%),
+        var(--color-surface-strong);
+    border: 1px solid color-mix(in srgb, var(--spectrum-red), transparent 70%);
+    border-radius: var(--radius-medium);
+}
+
+.support-card h3 {
+    font-size: 1.1rem;
+}
+
+.support-spark {
+    display: block;
+    background: var(--spectrum);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: spectrumShift 8s ease-in-out infinite alternate;
+}
+
+.support-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.support-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 16px;
+    color: var(--color-text);
+    background: var(--color-surface-strong);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.support-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+}
+
+.support-btn.primary {
+    color: #fff;
+    background: linear-gradient(120deg, var(--spectrum-red), #ff7e5f);
+    border-color: transparent;
+    box-shadow: 0 10px 22px color-mix(in srgb, var(--spectrum-red), transparent 60%);
+}
+
+.support-btn.primary:hover {
+    filter: brightness(1.05);
+}
+
 .footer-contact {
     display: grid;
     gap: 8px;
@@ -1584,6 +1771,48 @@ input[type="search"]:focus-visible {
 @keyframes toastOut {
     from { opacity: 1; transform: translateX(0); }
     to { opacity: 0; transform: translateX(16px); }
+}
+
+/* ===================== Artistic surfaces ===================== */
+
+/* Panels carry a soft painterly color wash instead of flat white. */
+.topbar,
+.toolbar,
+.image-panel,
+.sidebar,
+.harmony-studio,
+.footer-grid {
+    background:
+        radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--spectrum-blue), transparent 92%), transparent 42%),
+        radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--spectrum-red), transparent 93%), transparent 44%),
+        var(--color-surface);
+}
+
+.harmony-studio,
+.image-panel {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Faint painterly glow blob in the corner of larger panels. */
+.harmony-studio::after,
+.image-panel::after {
+    content: "";
+    position: absolute;
+    right: -60px;
+    bottom: -70px;
+    width: 220px;
+    height: 220px;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(circle, color-mix(in srgb, var(--spectrum-green), transparent 80%), transparent 70%);
+    filter: blur(8px);
+}
+
+.harmony-studio > *,
+.image-panel > * {
+    position: relative;
+    z-index: 1;
 }
 
 /* ===================== Motion ===================== */

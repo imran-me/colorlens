@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1024" viewBox="0 0 1440 1024" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b3a67"/>
+      <stop offset="0.5" stop-color="#496a8f"/>
+      <stop offset="1" stop-color="#e9a17c"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.7" cy="0.32" r="0.4">
+      <stop offset="0" stop-color="#ffe3a3"/>
+      <stop offset="0.4" stop-color="#ff9e6d"/>
+      <stop offset="1" stop-color="#ff9e6d" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="blobA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff5a8a"/><stop offset="1" stop-color="#7b2ff7"/>
+    </linearGradient>
+    <linearGradient id="blobB" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16c79a"/><stop offset="1" stop-color="#0f8a8a"/>
+    </linearGradient>
+    <linearGradient id="blobC" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd166"/><stop offset="1" stop-color="#ff6b6b"/>
+    </linearGradient>
+    <linearGradient id="stroke1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff5a68"/><stop offset="0.5" stop-color="#f5c542"/><stop offset="1" stop-color="#20b486"/>
+    </linearGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7b2ff7"/><stop offset="0.5" stop-color="#ff5a8a"/><stop offset="1" stop-color="#ffd166"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+    <filter id="grainy">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="7"/>
+      <feColorMatrix type="saturate" values="2.4"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+
+  <!-- Color-field backdrop (Rothko-like) -->
+  <rect width="1440" height="1024" fill="url(#sky)"/>
+  <circle cx="1010" cy="330" r="340" fill="url(#sun)"/>
+
+  <!-- Soft painterly blobs -->
+  <g filter="url(#soft)" opacity="0.85">
+    <ellipse cx="250" cy="240" rx="220" ry="180" fill="url(#blobA)"/>
+    <ellipse cx="1180" cy="760" rx="280" ry="220" fill="url(#blobB)"/>
+    <ellipse cx="560" cy="840" rx="240" ry="180" fill="url(#blobC)"/>
+    <ellipse cx="820" cy="120" rx="180" ry="140" fill="url(#blobA)"/>
+  </g>
+
+  <!-- Brush strokes -->
+  <g stroke-linecap="round" fill="none" opacity="0.8">
+    <path d="M-40 620 C 360 540, 720 700, 1160 560 S 1520 520, 1520 520" stroke="url(#stroke1)" stroke-width="42"/>
+    <path d="M120 200 C 420 320, 740 180, 1080 300" stroke="#ffffff" stroke-width="10" opacity="0.35"/>
+    <path d="M-20 900 C 380 820, 760 960, 1480 860" stroke="url(#stroke1)" stroke-width="30" opacity="0.7"/>
+  </g>
+
+  <!-- Abstract portrait profile (digital-art nod) -->
+  <g transform="translate(300 540)" opacity="0.9">
+    <path d="M0 0 C -10 -150, 120 -250, 210 -190 C 300 -130, 250 -40, 290 0 C 300 18, 270 26, 268 52
+             C 264 96, 300 96, 286 140 C 276 176, 232 168, 210 196 C 176 240, 188 300, 150 330
+             C 60 396, -40 350, -70 250 C -96 160, -40 120, 0 0 Z" fill="url(#face)"/>
+    <circle cx="170" cy="40" r="16" fill="#0e1116" opacity="0.55"/>
+    <path d="M120 150 q 40 40 96 12" stroke="#0e1116" stroke-width="8" fill="none" opacity="0.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Mondrian-like fine-art accent -->
+  <g transform="translate(1140 70)" opacity="0.92">
+    <rect width="220" height="220" fill="#f7f4ec" rx="6"/>
+    <rect x="0" y="0" width="90" height="90" fill="#e63946"/>
+    <rect x="150" y="130" width="70" height="90" fill="#1d3557"/>
+    <rect x="95" y="0" width="40" height="125" fill="#ffd166"/>
+    <g stroke="#0e1116" stroke-width="9">
+      <line x1="90" y1="0" x2="90" y2="220"/>
+      <line x1="0" y1="95" x2="220" y2="95"/>
+      <line x1="145" y1="95" x2="145" y2="220"/>
+    </g>
+  </g>
+
+  <!-- Subtle film grain over everything -->
+  <rect width="1440" height="1024" filter="url(#grainy)" opacity="0.12"/>
+</svg>

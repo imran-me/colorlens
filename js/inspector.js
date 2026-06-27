@@ -1,5 +1,6 @@
 import { appState } from "./state.js";
 import { normalizeColor } from "./colorConversions.js";
+import { isHandActive } from "./canvasViewport.js";
 import {
     addColorFromRgb,
     getCanvasElement,
@@ -10,17 +11,19 @@ import {
 } from "./ui.js";
 
 /*
-    Inspector mode
-    Change MAGNIFIER_ZOOM or MAGNIFIER_SIZE to adjust the Photoshop-style eyedropper view.
+    Inspector / eyedropper
+    Hover previews the pixel under the cursor; click saves it to the library.
+    Active only when the canvas "pick" tool is selected (see canvasViewport.js).
 */
 
 const MAGNIFIER_ZOOM = 15;
 const MAGNIFIER_SIZE = 160;
 const SAMPLE_SIZE = Math.ceil(MAGNIFIER_SIZE / MAGNIFIER_ZOOM);
 
+let lastHoverRgb = null;
+
 export function initializeInspector() {
     const canvas = getCanvasElement();
-
     if (!canvas) {
         return;
     }
@@ -28,6 +31,9 @@ export function initializeInspector() {
     canvas.addEventListener("pointermove", handlePointerMove);
     canvas.addEventListener("pointerleave", handlePointerLeave);
     canvas.addEventListener("click", handleCanvasClick);
+
+    document.querySelector("#lockColorBtn")?.addEventListener("click", saveCurrentColor);
+    document.querySelector("#readoutSaveBtn")?.addEventListener("click", saveCurrentColor);
 }
 
 function handlePointerMove(event) {
@@ -38,6 +44,7 @@ function handlePointerMove(event) {
     const canvas = getCanvasElement();
     const point = getCanvasPoint(event, canvas);
     const rgb = getPixelColor(canvas, point);
+    lastHoverRgb = rgb;
     const color = normalizeColor(rgb);
 
     updateInspectorReadout(color);
@@ -51,17 +58,32 @@ function handlePointerLeave() {
 
 function handleCanvasClick(event) {
     if (!canInspect()) {
-        setStatus(appState.image ? "Switch to Inspector mode to pick pixels" : "Upload an image first");
+        if (isHandActive()) {
+            return;
+        }
+        setStatus(appState.image ? "Switch to Inspector mode to pick colors" : "Upload an image first");
         return;
     }
 
     const canvas = getCanvasElement();
     const point = getCanvasPoint(event, canvas);
-    addColorFromRgb(getPixelColor(canvas, point), "Inspector");
+    addColorFromRgb(getPixelColor(canvas, point), "Picked");
+}
+
+function saveCurrentColor() {
+    if (!appState.image) {
+        setStatus("Upload an image first");
+        return;
+    }
+    if (!lastHoverRgb) {
+        setStatus("Hover over the image, then save");
+        return;
+    }
+    addColorFromRgb(lastHoverRgb, "Picked");
 }
 
 function canInspect() {
-    return appState.mode === "inspector" && Boolean(appState.image);
+    return Boolean(appState.image) && appState.mode === "inspector" && !isHandActive();
 }
 
 function getCanvasPoint(event, canvas) {
@@ -78,12 +100,7 @@ function getCanvasPoint(event, canvas) {
 function getPixelColor(canvas, point) {
     const context = canvas.getContext("2d", { willReadFrequently: true });
     const pixel = context.getImageData(point.x, point.y, 1, 1).data;
-
-    return {
-        r: pixel[0],
-        g: pixel[1],
-        b: pixel[2],
-    };
+    return { r: pixel[0], g: pixel[1], b: pixel[2] };
 }
 
 function drawMagnifier(sourceCanvas, point, event) {
@@ -129,7 +146,6 @@ function positionMagnifier(magnifier, event) {
 
 function hideMagnifier() {
     const magnifier = getMagnifierCanvasElement();
-
     if (magnifier) {
         magnifier.style.display = "none";
     }

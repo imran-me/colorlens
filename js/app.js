@@ -1,5 +1,6 @@
 import { initializeImageLoader, loadFromDataUrl } from "./imageLoader.js";
 import { initializeInspector } from "./inspector.js";
+import { initializeCanvasViewport } from "./canvasViewport.js";
 import { extractPalette } from "./paletteExtractor.js";
 import { appState } from "./state.js";
 import { createDemoImageDataUrl } from "./demoImage.js";
@@ -12,6 +13,7 @@ import { initializeUI } from "./ui.js";
 */
 
 initializeUI();
+initializeCanvasViewport();
 initializeImageLoader({ onImageLoaded: handleImageLoaded });
 initializeInspector();
 bindDemo();

@@ -121,12 +121,15 @@ export async function exportPdf(state) {
 
     const doc = new jsPdfNamespace.jsPDF({ unit: "pt", format: "a4" });
     const page = { width: doc.internal.pageSize.getWidth(), height: doc.internal.pageSize.getHeight() };
+
+    stampWatermark(doc, page, logo);
     let y = drawPdfHeader(doc, state, page, logo, report);
 
     buildExportRows(state).forEach((row) => {
         if (y > page.height - 120) {
             drawPdfFooter(doc, page);
             doc.addPage();
+            stampWatermark(doc, page, logo);
             y = 56;
         }
 
@@ -166,9 +169,9 @@ function drawPdfHeader(doc, state, page, logo, report) {
     if (logo?.dataUrl) {
         try {
             doc.setFillColor(255, 255, 255);
-            doc.roundedRect(42, 34, 70, 70, 10, 10, "F");
-            doc.addImage(logo.dataUrl, "PNG", 48, 40, 58, 58);
-            textX = 128;
+            doc.roundedRect(40, 26, 92, 92, 14, 14, "F");
+            doc.addImage(logo.dataUrl, "PNG", 48, 34, 76, 76);
+            textX = 152;
         } catch {
             textX = 42;
         }
@@ -192,28 +195,41 @@ function drawPdfHeader(doc, state, page, logo, report) {
         }
     }
 
-    drawWatermark(doc, page);
-
     doc.setTextColor(22, 24, 29);
     return 174;
 }
 
-function drawWatermark(doc, page) {
-    doc.saveGraphicsState?.();
-    doc.setTextColor(150, 150, 150);
-    doc.setFontSize(48);
-    doc.setFont("helvetica", "bold");
-    if (doc.setGState && doc.GState) {
-        doc.setGState(new doc.GState({ opacity: 0.06 }));
+/* Background watermark: the logo repeated across the whole page at ~30%.
+   Drawn before the content (which gets white fills), so it never sits on top. */
+function stampWatermark(doc, page, logo) {
+    if (!logo?.dataUrl) {
+        return;
     }
-    for (let yy = 220; yy < page.height - 60; yy += 180) {
-        doc.text(`${BRAND.appName} · ${BRAND.author}`, page.width / 2, yy, { align: "center", angle: 24 });
+    const hasGState = Boolean(doc.setGState && doc.GState);
+    if (hasGState) {
+        doc.setGState(new doc.GState({ opacity: 0.3 }));
     }
-    if (doc.setGState && doc.GState) {
+
+    const w = 96;
+    const h = w / (logo.width / logo.height || 1.5);
+    const stepX = 150;
+    const stepY = 132;
+    let row = 0;
+    for (let yy = 30; yy < page.height; yy += stepY) {
+        const offset = (row % 2) * (stepX / 2);
+        for (let xx = -stepX; xx < page.width + stepX; xx += stepX) {
+            try {
+                doc.addImage(logo.dataUrl, "PNG", xx + offset, yy, w, h);
+            } catch {
+                /* skip */
+            }
+        }
+        row += 1;
+    }
+
+    if (hasGState) {
         doc.setGState(new doc.GState({ opacity: 1 }));
     }
-    doc.restoreGraphicsState?.();
-    doc.setTextColor(22, 24, 29);
 }
 
 function drawSpectrumStrip(doc, width, y) {
@@ -234,7 +250,8 @@ function drawColorRow(doc, row, y) {
     const rgb = row.color.rgb;
 
     doc.setDrawColor(229, 231, 235);
-    doc.roundedRect(42, y - 24, 512, 64, 8, 8);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(42, y - 24, 512, 64, 8, 8, "FD");
     doc.setFillColor(rgb.r, rgb.g, rgb.b);
     doc.circle(72, y + 8, 18, "F");
     doc.setTextColor(22, 24, 29);

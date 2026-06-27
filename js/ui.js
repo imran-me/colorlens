@@ -2,6 +2,7 @@ import { appState, setMode } from "./state.js";
 import { isSameColor, normalizeColor } from "./colorConversions.js";
 import { exportCsv, exportJson, exportPdf, exportTxt } from "./pdfExporter.js";
 import { exportPng } from "./imageExporter.js";
+import { refreshCursor } from "./canvasViewport.js";
 import { BRAND } from "./brand.js";
 import { HARMONY_SCHEMES, buildHarmony } from "./harmonies.js";
 
@@ -273,8 +274,8 @@ function activateMode(mode) {
     dom.inspectorModeBtn?.classList.toggle("is-active", !isPalette);
     dom.paletteModeBtn?.setAttribute("aria-pressed", String(isPalette));
     dom.inspectorModeBtn?.setAttribute("aria-pressed", String(!isPalette));
-    document.body.classList.toggle("inspector-mode", !isPalette);
-    setStatus(isPalette ? "Palette mode active" : "Inspector mode — click the image to pick pixels");
+    refreshCursor();
+    setStatus(isPalette ? "Palette mode — view & extract colors" : "Inspector mode — click the image to pick colors");
 }
 
 function bindLibraryControls() {
@@ -473,6 +474,9 @@ function bindShortcuts() {
                 break;
             case "i":
                 activateMode("inspector");
+                break;
+            case "h":
+                document.querySelector("#panToolBtn")?.click();
                 break;
             case "d":
                 dom.darkModeBtn?.click();

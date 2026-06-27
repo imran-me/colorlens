@@ -29,7 +29,7 @@ export async function exportPng(state) {
     const swatchSize = Math.floor((swatchAreaWidth - SWATCH_GAP * (COLS - 1)) / COLS);
     const swatchHeight = swatchSize + 70; // room for name + hex under each swatch
 
-    const headerHeight = 188;
+    const headerHeight = 200;
     const footerHeight = 196;
     const gridHeight = rows * swatchHeight + (rows - 1) * SWATCH_GAP;
     const height = headerHeight + gridHeight + footerHeight;
@@ -42,7 +42,8 @@ export async function exportPng(state) {
     ctx.textBaseline = "alphabetic";
 
     paintBackground(ctx, height);
-    paintWatermark(ctx, height);
+    paintBrushDecor(ctx, height);
+    paintWatermark(ctx, height, logoImg);
     paintHeader(ctx, logoImg, colors.length, state);
     paintGrid(ctx, colors, headerHeight, swatchSize, swatchHeight);
     paintFooter(ctx, height, footerHeight);
@@ -71,33 +72,63 @@ function paintBackground(ctx, height) {
     ctx.fillRect(0, 0, WIDTH, 6);
 }
 
-function paintWatermark(ctx, height) {
+/* Artistic brush strokes in spectrum colors for a painterly backdrop. */
+function paintBrushDecor(ctx, height) {
+    const strokes = [
+        { x: -60, y: height * 0.42, w: 420, h: 26, a: -18, c: "#ff5a68" },
+        { x: WIDTH - 360, y: height * 0.2, w: 460, h: 22, a: 12, c: "#3b82f6" },
+        { x: WIDTH * 0.3, y: height * 0.8, w: 520, h: 24, a: -8, c: "#20b486" },
+        { x: WIDTH * 0.55, y: height * 0.6, w: 300, h: 18, a: 16, c: "#f5c542" },
+    ];
+
+    strokes.forEach((s) => {
+        ctx.save();
+        ctx.globalAlpha = 0.07;
+        ctx.translate(s.x + s.w / 2, s.y);
+        ctx.rotate((s.a * Math.PI) / 180);
+        ctx.fillStyle = s.c;
+        roundRect(ctx, -s.w / 2, -s.h / 2, s.w, s.h, s.h / 2);
+        ctx.fill();
+        ctx.restore();
+    });
+}
+
+/* Background watermark: the logo, repeated across the whole poster, ~30% so it
+   reads clearly but stays behind the swatches and text (drawn before them). */
+function paintWatermark(ctx, height, logoImg) {
+    if (!logoImg) {
+        return;
+    }
     ctx.save();
-    ctx.globalAlpha = 0.05;
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "700 26px Inter, Arial, sans-serif";
-    const text = `${BRAND.appName} · ${BRAND.author}`;
-    const stepX = 360;
-    const stepY = 180;
-    ctx.translate(0, 0);
-    ctx.rotate((-22 * Math.PI) / 180);
-    for (let y = -100; y < height + 300; y += stepY) {
-        for (let x = -200; x < WIDTH + 400; x += stepX) {
-            ctx.fillText(text, x, y);
+    ctx.globalAlpha = 0.3;
+    const tileW = 150;
+    const tileH = tileW / (logoImg.naturalWidth / logoImg.naturalHeight || 1.5);
+    const stepX = 250;
+    const stepY = 200;
+    let row = 0;
+    for (let y = 20; y < height; y += stepY) {
+        const offset = (row % 2) * (stepX / 2);
+        for (let x = -stepX; x < WIDTH + stepX; x += stepX) {
+            try {
+                ctx.drawImage(logoImg, x + offset, y, tileW, tileH);
+            } catch {
+                /* skip */
+            }
         }
+        row += 1;
     }
     ctx.restore();
 }
 
 function paintHeader(ctx, logoImg, count, state) {
-    const top = 34;
+    const top = 30;
 
     if (logoImg) {
-        const size = 64;
-        drawRoundedImage(ctx, logoImg, PADDING, top, size, size, 14);
-        writeBrandText(ctx, PADDING + size + 18, top, count, state);
+        const size = 104;
+        drawRoundedImage(ctx, logoImg, PADDING, top, size, size, 22);
+        writeBrandText(ctx, PADDING + size + 22, top + 6, count, state);
     } else {
-        writeBrandText(ctx, PADDING, top, count, state);
+        writeBrandText(ctx, PADDING, top + 6, count, state);
     }
 }
 

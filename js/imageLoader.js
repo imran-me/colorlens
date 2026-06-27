@@ -1,5 +1,6 @@
 import { setImage } from "./state.js";
 import { getCanvasElement, setStatus } from "./ui.js";
+import { handleImageReady } from "./canvasViewport.js";
 
 /*
     Image loader
@@ -11,10 +12,8 @@ const MAX_CANVAS_SIDE = 1800;
 export function initializeImageLoader({ onImageLoaded } = {}) {
     const input = document.querySelector("#imageInput");
     const dropZone = document.querySelector("#dropZone");
-    const uploadNewImageBtn = document.querySelector("#uploadNewImageBtn");
 
     input?.addEventListener("change", () => handleFile(input.files?.[0], onImageLoaded));
-    uploadNewImageBtn?.addEventListener("click", () => input?.click());
     bindDropZone(dropZone, onImageLoaded);
 }
 
@@ -31,6 +30,7 @@ export async function loadFromDataUrl(dataUrl, fileName, onImageLoaded) {
 
         setImage({ image, fileName, dataUrl: previewDataUrl });
         document.body.classList.add("has-image");
+        handleImageReady();
         setStatus(`${fileName} loaded`);
         onImageLoaded?.({ image, canvas });
     } catch (error) {
@@ -94,6 +94,7 @@ async function handleFile(file, onImageLoaded) {
         });
 
         document.body.classList.add("has-image");
+        handleImageReady();
         setStatus(`${file.name} loaded`);
         onImageLoaded?.({ image, canvas });
     } catch (error) {

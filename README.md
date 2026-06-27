@@ -22,7 +22,7 @@ Built with HTML5, CSS3, and vanilla JavaScript (ES modules). GitHub Pages friend
 
 ### Keyboard shortcuts
 
-`U` upload · `P` palette mode · `I` inspector mode · `G` toggle grid/list · `D` dark mode ·
+`U` upload · `E` eyedropper tool · `H` hand/pan tool · `G` toggle grid/list · `D` dark mode ·
 `/` focus search · `Ctrl/Cmd+Z` undo.
 
 ## Project structure
